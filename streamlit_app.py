@@ -24,7 +24,7 @@ st.title("Explorador de operación")
 st.caption("Aplicación inicial para explorar resultados por área y región.")
 
 # TODO OBLIGATORIO: escribe tu nombre completo.
-st.write("**Desarrollado por:** Escribe aquí tu nombre")
+st.write("**Desarrollado por:** Juan Carlos Muñoz Flores")
 
 st.sidebar.header("Filtros")
 
@@ -87,3 +87,34 @@ st.info(
 # - Organiza resultados y metodología en pestañas o en la barra lateral.
 # - Incluye una conclusión o recomendación basada en los datos visibles.
 
+import streamlit as st
+import pandas as pd
+
+st.divider()
+st.subheader("📊 Tablero Ejecutivo")
+
+# Datos de prueba
+data = pd.DataFrame({
+    'Categoría': ['Ventas', 'Ventas', 'Marketing', 'Marketing', 'Soporte'],
+    'Región': ['Norte', 'Sur', 'Norte', 'Sur', 'Norte'],
+    'Monto': [12000, 15000, 8000, 9500, 5000]
+})
+
+# Filtro
+region = st.selectbox("Selecciona la Región:", options=['Todas'] + list(data['Región'].unique()))
+
+df_filtrado = data if region == 'Todas' else data[data['Región'] == region]
+
+# Indicadores
+col1, col2 = st.columns(2)
+col1.metric("Total de Ventas", f"${df_filtrado['Monto'].sum():,.2f}")
+col2.metric("Promedio por Registro", f"${df_filtrado['Monto'].mean():,.2f}")
+
+# Vistas en Tabs
+tab1, tab2 = st.tabs(["📋 Detalle de Datos", "📈 Resumen por Categoría"])
+
+with tab1:
+    st.dataframe(df_filtrado)
+
+with tab2:
+    st.bar_chart(df_filtrado.groupby('Categoría')['Monto'].sum())
